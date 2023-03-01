@@ -3,10 +3,15 @@ package com.gettrx.swapi.web.controller;
 import com.gettrx.swapi.domain.dto.PlanetsDTO;
 import com.gettrx.swapi.domain.service.PlanetsService;
 
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,22 +26,38 @@ public class PlanetsController {
     }
 
     @GetMapping("/page/{idPage}")
-    public List<PlanetsDTO> getByPage(@PathVariable("idPage") int idPage){
-        return planetsService.getPlanetsByPage(idPage);
+    public ResponseEntity<Object> getByPage(@PathVariable("idPage") int idPage){
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.OK);
+        body.put("response", planetsService.getPlanetsByPage(idPage));
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @GetMapping("/{idPlanets}")
-    public PlanetsDTO getPlanets(@PathVariable("idPlanets") int idPlanets){
-        return planetsService.getPlanets(idPlanets);
+    public ResponseEntity<Object> getPlanets(@PathVariable("idPlanets") int idPlanets){
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.OK);
+        body.put("response", planetsService.getPlanets(idPlanets));
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @PostMapping("/save")
-    public PlanetsDTO save(@RequestBody PlanetsDTO peopleDTO){
-        return planetsService.save(peopleDTO);
+    public ResponseEntity<Object> save(@RequestBody PlanetsDTO peopleDTO){
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.OK);
+        body.put("response", planetsService.save(peopleDTO));
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{idPlanets}")
-    public boolean delete( @PathVariable("idPlanets") int idPlanets){
-        return planetsService.delete(idPlanets);
+    public ResponseEntity<Object> delete( @PathVariable("idPlanets") int idPlanets){
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.OK);
+        body.put("response", planetsService.delete(idPlanets));
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 }
