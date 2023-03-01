@@ -21,7 +21,7 @@ public interface SwapiPlanetsMapper {
     List<PlanetsDTO> toPlanetsDTOList(List<SwapiPlanetsDTO> planetsList);
     @Named("residentsFunction")
     public static String residentsFunction(List<String> residents) {
-        return residents.toString();
+        return residents.isEmpty()? "":residents.get(0);
     }
 
     @Named("urlToId")

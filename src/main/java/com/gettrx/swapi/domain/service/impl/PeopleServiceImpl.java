@@ -4,6 +4,7 @@ import com.gettrx.swapi.domain.dto.PeopleDTO;
 import com.gettrx.swapi.domain.repository.PeopleRepository;
 import com.gettrx.swapi.domain.service.PeopleService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -29,18 +30,13 @@ public class PeopleServiceImpl implements PeopleService {
     @Override
     public List<PeopleDTO> getPeopleByPage(int idPage) {
 
-        int currentPage = idPage;
-        for (int page = 1; page<currentPage; page++) {
-            swapiWebClient.getPeopleByPage(page).map( listPeople->{
-                listPeople.forEach(peopleDTO -> peopleRepository.save(peopleDTO));
-                return listPeople;
-            }).orElseThrow(() -> new PageNotFoundException("People", idPage));
+        List<PeopleDTO> listPeopleDTO = new ArrayList<>();
+        for (int page = 1; page<=idPage; page++) {
+            swapiWebClient.getPeopleByPage(page)
+                    .map(listPeopleDTO::addAll)
+                    .orElseThrow(() -> new PageNotFoundException("People", idPage));
         }
-
-        return swapiWebClient.getPeopleByPage(idPage).map( listPeople->{
-            listPeople.forEach(peopleDTO -> peopleRepository.save(peopleDTO));
-            return listPeople;
-        }).orElseThrow(() -> new PageNotFoundException("People", idPage));
+        return listPeopleDTO;
     }
     @Override
     public PeopleDTO getPeople(int idPeople){

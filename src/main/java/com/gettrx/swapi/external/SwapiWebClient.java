@@ -52,10 +52,7 @@ public class SwapiWebClient {
                 .uri("/people/{id}", id)
                 .retrieve()
                 .bodyToMono(SwapiPeopleDTO.class)
-                .onErrorResume(WebClientResponseException.class,
-                        ex -> ex.getRawStatusCode() == HttpStatus.BAD_REQUEST.value() ?
-                                Mono.error(new PeopleNotFoundException(id)):
-                                Mono.error(ex))
+                .onErrorResume(Mono::error)
                 .block();
             return Optional.ofNullable(SwapiPeopleMapper.INSTANCE.toSwapiPeopleDTO(swapiPeopleDTO));
         } catch(Exception exception) {
@@ -66,18 +63,15 @@ public class SwapiWebClient {
     public Optional<List<PlanetsDTO>> getPlanetsByPage(Integer idPage){
         try {
             SwapiPlanetsDTO[] aPlanetsDTO =  Objects.requireNonNull(webClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/planets/")
-                            .queryParam("page", idPage)
-                            .build())
-                    .retrieve()
-                    .bodyToMono(SwapiReqPlanetsDto.class)
-                    .onErrorResume(WebClientResponseException.class,
-                            ex -> ex.getRawStatusCode() == HttpStatus.BAD_REQUEST.value() ?
-                                    Mono.error(new PageNotFoundException("Planets",idPage)):
-                                    Mono.error(ex))
-                    .block())
-                    .getResults();
+                .uri(uriBuilder -> uriBuilder
+                        .path("/planets/")
+                        .queryParam("page", idPage)
+                        .build())
+                .retrieve()
+                .bodyToMono(SwapiReqPlanetsDto.class)
+                .onErrorResume(Mono::error)
+                .block())
+                .getResults();
 
             return Optional.ofNullable(SwapiPlanetsMapper.INSTANCE.toPlanetsDTOList(Arrays.asList(aPlanetsDTO)));
         } catch(Exception exception) {
@@ -91,10 +85,7 @@ public class SwapiWebClient {
                 .uri("/planets/{id}", id)
                 .retrieve()
                 .bodyToMono(SwapiPlanetsDTO.class)
-                .onErrorResume(WebClientResponseException.class,
-                        ex -> ex.getRawStatusCode() == HttpStatus.BAD_REQUEST.value() ?
-                                Mono.error(new PlanetsNotFoundException(id)):
-                                Mono.error(ex))
+                .onErrorResume(Mono::error)
                 .block();
             return Optional.ofNullable(SwapiPlanetsMapper.INSTANCE.toPlanetsDTO(aPlanetsDTO));
         } catch(Exception exception) {

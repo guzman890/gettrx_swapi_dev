@@ -8,6 +8,8 @@ import com.gettrx.swapi.exception.PageNotFoundException;
 import com.gettrx.swapi.exception.PlanetsNotFoundException;
 import com.gettrx.swapi.exception.ValidateException;
 import com.gettrx.swapi.external.SwapiWebClient;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,18 +32,14 @@ public class PlanetsServiceImpl implements PlanetsService {
     @Override
     public List<PlanetsDTO> getPlanetsByPage(int idPage) {
 
-        int currentPage = idPage;
-        for (int page = 1; page<currentPage; page++) {
-            swapiWebClient.getPlanetsByPage(page).map( listPlanets->{
-                listPlanets.forEach(planetsDTO -> planetsRepository.save(planetsDTO));
-                return listPlanets;
-            }).orElseThrow(() -> new PageNotFoundException("Planets", idPage));
+        List<PlanetsDTO> listPlanetsDTO = new ArrayList<>();
+        for (int page = 1; page<=idPage; page++) {
+            swapiWebClient.getPlanetsByPage(page)
+                    .map(listPlanetsDTO::addAll)
+                    .orElseThrow(() -> new PageNotFoundException("Planets", idPage));
         }
 
-        return swapiWebClient.getPlanetsByPage(idPage).map( listPlanets->{
-            listPlanets.forEach(planetsDTO -> planetsRepository.save(planetsDTO));
-            return listPlanets;
-        }).orElseThrow(() -> new PageNotFoundException("Planets", idPage));
+        return listPlanetsDTO;
     }
     @Override
     public PlanetsDTO getPlanets(int idPlanets){
